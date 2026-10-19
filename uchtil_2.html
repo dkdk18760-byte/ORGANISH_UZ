@@ -1,0 +1,1116 @@
+<title>Tilkon</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: tepada logo va o‘ng tomonda ovoz + oq/qora tugmasi; hero; uchta kurs kartasi; ish maydoni.
+   Orqa fon: sekin siljiydigan rangli dog‘lar. Har bir kursning o‘z rangi: Ingliz = ko‘k, Rus = qizil, IT = yashil. */
+:root {
+  --bg: #F2F4FB;
+  --surface: #FFFFFF;
+  --fg: #11151B;
+  --muted: #566070;
+  --line: #D9DEE8;
+  --en: #2F4BFF;
+  --ru: #D6362A;
+  --it: #0A7F58;
+  --on-c: #FFFFFF;
+  --ok: #0A7F58;
+  --bad: #C62828;
+  --b1: #7C93FF;
+  --b2: #FF8FA8;
+  --b3: #6FE0B5;
+  --b4: #FFD27A;
+  --blob: .55;
+  --shadow: 0 1px 0 rgba(17,21,27,.04), 0 12px 32px -16px rgba(17,21,27,.28);
+  --f-display: "Unbounded", "Manrope", system-ui, sans-serif;
+  --f-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B0D14; --surface: #161A24; --fg: #EEF1F5; --muted: #9AA4B2; --line: #2A3040;
+    --en: #8296FF; --ru: #FF7D6E; --it: #45D6A0; --on-c: #0B0D12; --ok: #45D6A0; --bad: #FF8A80;
+    --b1: #3B4DFF; --b2: #FF3B73; --b3: #00C48C; --b4: #8A3FFC; --blob: .4;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -16px rgba(0,0,0,.8);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B0D14; --surface: #161A24; --fg: #EEF1F5; --muted: #9AA4B2; --line: #2A3040;
+  --en: #8296FF; --ru: #FF7D6E; --it: #45D6A0; --on-c: #0B0D12; --ok: #45D6A0; --bad: #FF8A80;
+  --b1: #3B4DFF; --b2: #FF3B73; --b3: #00C48C; --b4: #8A3FFC; --blob: .4;
+  --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -16px rgba(0,0,0,.8);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+#app[data-course="en"] { --c: var(--en); }
+#app[data-course="ru"] { --c: var(--ru); }
+#app[data-course="it"] { --c: var(--it); }
+#app {
+  --c-soft: color-mix(in srgb, var(--c) 11%, var(--surface));
+  --c-line: color-mix(in srgb, var(--c) 45%, var(--line));
+  --glass: color-mix(in srgb, var(--surface) 80%, transparent);
+  position: relative;
+}
+
+/* orqa fon */
+.bg { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+.blob { position: absolute; border-radius: 50%; filter: blur(72px); opacity: var(--blob); will-change: transform; }
+.b1 { width: 46vmax; height: 46vmax; left: -12vmax; top: -14vmax; background: var(--b1); animation: d1 24s ease-in-out infinite alternate; }
+.b2 { width: 40vmax; height: 40vmax; right: -14vmax; top: 6vmax; background: var(--b2); animation: d2 28s ease-in-out infinite alternate; }
+.b3 { width: 44vmax; height: 44vmax; left: 8vmax; bottom: -24vmax; background: var(--b3); animation: d3 26s ease-in-out infinite alternate; }
+.b4 { width: 30vmax; height: 30vmax; right: 4vmax; bottom: -12vmax; background: var(--b4); animation: d4 30s ease-in-out infinite alternate; }
+@keyframes d1 { to { transform: translate(14vmax, 10vmax) scale(1.15); } }
+@keyframes d2 { to { transform: translate(-12vmax, 12vmax) scale(.9); } }
+@keyframes d3 { to { transform: translate(16vmax, -10vmax) scale(1.1); } }
+@keyframes d4 { to { transform: translate(-10vmax, -14vmax) scale(1.2); } }
+.bg::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--fg) 22%, transparent) 1px, transparent 1.2px);
+  background-size: 26px 26px; opacity: .35;
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 85%); mask-image: linear-gradient(180deg, #000, transparent 85%);
+}
+
+.wrap {
+  position: relative; z-index: 1;
+  max-width: 1040px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 56px;
+}
+
+/* tugmalar: bosilganda animatsiya */
+button {
+  font: inherit; color: inherit; cursor: pointer; position: relative; overflow: hidden;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s, border-color .15s, background .15s, filter .15s, opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+button:not(:disabled):hover { transform: translateY(-2px); }
+button:not(:disabled):active { transform: scale(.94); transition-duration: .08s; }
+button:disabled { cursor: default; }
+.ripple { position: absolute; border-radius: 50%; background: currentColor; opacity: .28; transform: scale(0); animation: rip .5s ease-out forwards; pointer-events: none; }
+@keyframes rip { to { transform: scale(1); opacity: 0; } }
+.spark { position: fixed; width: 9px; height: 9px; border-radius: 50%; pointer-events: none; z-index: 60; animation: spark .7s ease-out forwards; }
+@keyframes spark {
+  from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2); opacity: 0; }
+}
+:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+
+/* yuqori qator */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 4px 26px; }
+.logo { display: flex; align-items: center; gap: 12px; font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; letter-spacing: -.03em; }
+.mark {
+  width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: 1.1rem;
+  background: conic-gradient(from 210deg, var(--en), var(--ru), var(--it), var(--en));
+  box-shadow: 0 6px 18px -6px var(--en); transform: rotate(-6deg);
+}
+.tools { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.ibtn { display: inline-flex; align-items: center; gap: 8px; background: var(--glass); border: 1px solid var(--line); border-radius: 12px; padding: 9px 14px; font-weight: 600; font-size: .92rem; backdrop-filter: blur(10px); }
+.ibtn:hover { border-color: var(--c); }
+.ibtn svg { width: 18px; height: 18px; flex: none; }
+.switch { width: 66px; height: 36px; border-radius: 99px; border: 1px solid var(--line); background: var(--glass); padding: 3px; backdrop-filter: blur(10px); display: block; }
+.knob { position: absolute; top: 3px; left: 3px; width: 28px; height: 28px; border-radius: 50%; background: var(--fg); color: var(--bg); display: grid; place-items: center; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.knob svg { width: 16px; height: 16px; grid-area: 1 / 1; transition: opacity .2s, transform .35s; }
+.knob .moon { opacity: 0; transform: rotate(-60deg) scale(.5); }
+.switch[aria-checked="true"] .knob { transform: translateX(30px); }
+.switch[aria-checked="true"] .knob .sun { opacity: 0; transform: rotate(60deg) scale(.5); }
+.switch[aria-checked="true"] .knob .moon { opacity: 1; transform: none; }
+
+/* ovoz paneli */
+.vpanel { background: var(--glass); backdrop-filter: blur(16px); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; margin-bottom: 22px; display: grid; gap: 12px; box-shadow: var(--shadow); animation: pop .25s ease-out; }
+.vpanel h3 { margin: 0; font-family: var(--f-display); font-size: 1rem; }
+.vpanel p { margin: 0; color: var(--muted); font-size: .9rem; max-width: 70ch; }
+.vrow { display: grid; grid-template-columns: 140px minmax(0, 1fr) auto; gap: 10px 14px; align-items: center; }
+.vrow label { font-weight: 600; font-size: .9rem; }
+select, input[type="range"] { width: 100%; min-width: 0; }
+select { background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; font: inherit; font-size: .9rem; }
+.vmsg { color: var(--bad) !important; }
+.vmsg:empty { display: none; }
+
+/* hero */
+.hero { padding-block: 6px 22px; max-width: 800px; }
+.hero h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.8rem, 5.4vw, 3.2rem); line-height: 1.1; letter-spacing: -.035em; margin: 0 0 14px; text-wrap: balance; }
+.w-en { color: var(--en); } .w-ru { color: var(--ru); } .w-it { color: var(--it); }
+.hero p { margin: 0; color: var(--muted); font-size: 1.05rem; max-width: 60ch; }
+.stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.chip { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 14px; padding: 10px 16px; display: flex; align-items: baseline; gap: 8px; }
+.chip b { font-family: var(--f-mono); font-weight: 500; font-size: 1.15rem; }
+.chip span { color: var(--muted); font-size: .85rem; }
+.chip.goal { flex-wrap: wrap; min-width: 210px; flex: 1 1 210px; max-width: 320px; }
+.chip.goal .bar { flex-basis: 100%; margin: 4px 0 0; }
+.chip.goal .bar i { background: linear-gradient(90deg, var(--en), var(--ru), var(--it)); }
+
+/* kurs kartalari */
+.courses { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-bottom: 26px; }
+.course {
+  --k: var(--en);
+  text-align: left; background: var(--glass); backdrop-filter: blur(12px); border: 1.5px solid var(--line); border-radius: 20px;
+  padding: 18px 18px 16px; display: grid; gap: 4px; min-width: 0;
+}
+.course[data-k="ru"] { --k: var(--ru); }
+.course[data-k="it"] { --k: var(--it); }
+.course:hover { border-color: var(--k); box-shadow: 0 14px 30px -16px var(--k); }
+.course[aria-pressed="true"] { border-color: var(--k); background: color-mix(in srgb, var(--k) 12%, var(--surface)); box-shadow: 0 16px 34px -18px var(--k); }
+.glyph { font-family: var(--f-display); font-weight: 700; font-size: 2.6rem; line-height: 1; color: var(--k); letter-spacing: -.04em; margin-bottom: 10px; }
+.course h2 { margin: 0; font-size: 1.1rem; font-weight: 700; }
+.course .sub { color: var(--muted); font-size: .88rem; }
+.bar { height: 6px; border-radius: 99px; background: var(--line); margin-top: 14px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--k, var(--c)); border-radius: 99px; transition: width .4s; }
+.course .cnt { font-family: var(--f-mono); font-size: .78rem; color: var(--muted); margin-top: 6px; }
+
+/* ish maydoni */
+.work { background: var(--glass); backdrop-filter: blur(18px) saturate(1.2); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; }
+.work-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 8px 20px; padding: 18px 22px 0; border-bottom: 1px solid var(--line); }
+.work-head h2 { margin: 0 0 12px; font-family: var(--f-display); font-size: 1.15rem; font-weight: 700; letter-spacing: -.02em; color: var(--c); }
+.tabs { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { background: none; border: 0; padding: 10px 14px 12px; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; white-space: nowrap; border-radius: 10px 10px 0 0; flex: none; }
+.tab:not(:disabled):hover { transform: none; color: var(--fg); background: color-mix(in srgb, var(--c) 8%, transparent); }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--c); }
+.body { padding: 22px; }
+.view { animation: fadeup .35s ease-out; }
+@keyframes fadeup { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { transform: scale(.97); opacity: .6; } to { transform: none; opacity: 1; } }
+
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-bottom: 18px; }
+.seg { display: inline-flex; flex-wrap: wrap; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 3px; }
+.seg button { border: 0; background: none; padding: 6px 14px; border-radius: 9px; font-size: .9rem; font-weight: 600; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.14); }
+.count { font-family: var(--f-mono); font-size: .82rem; color: var(--muted); }
+
+/* kartochka */
+.stage { max-width: 640px; margin: 0 auto; display: grid; gap: 14px; perspective: 900px; }
+.pos { display: flex; align-items: center; gap: 12px; font-family: var(--f-mono); font-size: .8rem; color: var(--muted); }
+.pos .bar { flex: 1; margin: 0; }
+.card {
+  width: 100%; min-height: 270px; border-radius: 22px; border: 1.5px solid var(--c-line); background: var(--c-soft);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px;
+  padding: 26px 22px; min-width: 0; animation: pop .22s ease-out;
+}
+.card:not(:disabled):hover { transform: translateY(-3px); box-shadow: 0 18px 36px -20px var(--c); }
+.card.back { background: var(--surface); border-color: var(--c); }
+.card.a-flip { animation: flipin .4s cubic-bezier(.2,.8,.3,1); }
+.card.a-slide { animation: slidein .3s cubic-bezier(.2,.8,.3,1); }
+@keyframes flipin { from { transform: rotateY(88deg) scale(.96); opacity: .3; } to { transform: none; opacity: 1; } }
+@keyframes slidein { from { transform: translateX(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tag { position: absolute; top: 16px; left: 18px; font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+.q { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.8rem, 6vw, 2.8rem); line-height: 1.15; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.tr { font-family: var(--f-mono); color: var(--muted); font-size: 1rem; }
+.hint { position: absolute; bottom: 14px; font-size: .78rem; color: var(--muted); }
+.ans { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.5rem, 5vw, 2.2rem); line-height: 1.2; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.ex { font-size: 1.05rem; max-width: 44ch; overflow-wrap: anywhere; }
+[data-course="it"] .ex { font-family: var(--f-mono); font-size: .92rem; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.exuz { font-size: .92rem; color: var(--muted); }
+.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn { border-radius: 14px; border: 1.5px solid var(--c); padding: 13px 16px; font-weight: 700; background: var(--glass); color: var(--c); }
+.btn.fill { background: var(--c); color: var(--on-c); }
+.btn:not(:disabled):hover { filter: brightness(1.07); box-shadow: 0 12px 24px -14px var(--c); }
+.empty { text-align: center; padding: 30px 12px; display: grid; gap: 10px; justify-items: center; }
+.empty h3 { font-family: var(--f-display); margin: 0; font-size: 1.3rem; }
+.empty p { margin: 0 0 6px; color: var(--muted); max-width: 46ch; }
+
+/* test */
+.quiz { max-width: 640px; margin: 0 auto; display: grid; gap: 16px; }
+.qprompt { color: var(--muted); font-size: .95rem; }
+.qword { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.7rem, 5.5vw, 2.5rem); letter-spacing: -.02em; line-height: 1.15; overflow-wrap: anywhere; }
+.opts { display: grid; gap: 10px; }
+.opt { text-align: left; background: var(--glass); border: 1.5px solid var(--line); border-radius: 14px; padding: 13px 16px; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.opt:not(:disabled):hover { border-color: var(--c); }
+.opt.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 16%, var(--surface)); animation: pop .3s; }
+.opt.bad { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 16%, var(--surface)); animation: shake .4s; }
+.opt.dim { opacity: .5; }
+.score { font-family: var(--f-display); font-weight: 700; font-size: 3rem; color: var(--c); letter-spacing: -.03em; }
+@keyframes shake { 0%,100% { transform: none; } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+
+/* juftlash */
+.mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 680px; margin: 0 auto; }
+.mcol { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.mt { text-align: center; background: var(--glass); border: 1.5px solid var(--line); border-radius: 14px; padding: 14px 10px; font-weight: 700; min-height: 56px; overflow-wrap: anywhere; min-width: 0; }
+.mt:not(:disabled):hover { border-color: var(--c); }
+.mt.sel { border-color: var(--c); background: var(--c-soft); transform: scale(1.03); }
+.mt.done { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 16%, var(--surface)); opacity: .75; }
+.mt.shake { animation: shake .4s; border-color: var(--bad); }
+.minfo { max-width: 680px; margin: 0 auto 14px; display: flex; justify-content: space-between; font-family: var(--f-mono); font-size: .82rem; color: var(--muted); }
+
+/* gap tuzish */
+.build { max-width: 680px; margin: 0 auto; display: grid; gap: 16px; }
+.answer { min-height: 66px; border: 2px dashed var(--c-line); border-radius: 18px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--c-soft); }
+.answer.ok { border-style: solid; border-color: var(--ok); }
+.answer.bad { border-style: solid; border-color: var(--bad); animation: shake .4s; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; }
+.tok { background: var(--surface); border: 1.5px solid var(--line); border-radius: 11px; padding: 8px 13px; font-weight: 600; animation: pop .2s ease-out; }
+.tok.mono { font-family: var(--f-mono); font-size: .9rem; }
+.tok:not(:disabled):hover { border-color: var(--c); }
+.fb { padding: 10px 14px; border-radius: 12px; font-weight: 600; overflow-wrap: anywhere; }
+.fb.ok { background: color-mix(in srgb, var(--ok) 16%, var(--surface)); }
+.fb.bad { background: color-mix(in srgb, var(--bad) 14%, var(--surface)); }
+
+/* yozish */
+.typing { max-width: 720px; margin: 0 auto; display: grid; gap: 14px; }
+.tstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tile { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 10px 14px; display: grid; }
+.tile b { font-family: var(--f-mono); font-weight: 500; font-size: 1.4rem; color: var(--c); }
+.tile span { font-size: .78rem; color: var(--muted); }
+.tprompt { color: var(--muted); }
+.tprompt b { color: var(--fg); font-size: 1.15rem; }
+.ttarget { font-family: var(--f-mono); font-size: clamp(1.1rem, 3.6vw, 1.55rem); line-height: 1.9; overflow-wrap: anywhere; padding: 16px 18px; border: 1.5px solid var(--c-line); background: var(--c-soft); border-radius: 18px; min-height: 80px; }
+.ttarget .ok { color: var(--ok); }
+.ttarget .bad { color: var(--bad); background: color-mix(in srgb, var(--bad) 20%, transparent); border-radius: 4px; }
+.ttarget .cur { border-bottom: 3px solid var(--c); animation: blink 1s steps(1) infinite; }
+.ttarget .dim { opacity: .55; }
+@keyframes blink { 50% { border-bottom-color: transparent; } }
+#tin { width: 100%; font: inherit; font-family: var(--f-mono); font-size: 1.15rem; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface); color: var(--fg); }
+#tin:focus { outline: none; border-color: var(--c); box-shadow: 0 0 0 4px color-mix(in srgb, var(--c) 20%, transparent); }
+.kb { display: grid; gap: 6px; justify-items: center; }
+.kbrow { display: flex; gap: 5px; justify-content: center; flex-wrap: nowrap; max-width: 100%; }
+.key { min-width: 0; flex: 1 1 0; max-width: 46px; height: 42px; border-radius: 9px; border: 1px solid var(--line); background: var(--glass); font-weight: 600; font-size: 1rem; padding: 0 2px; }
+.key.wide { max-width: 64px; flex: 1.5 1 0; }
+.key.space { max-width: 190px; flex: 5 1 0; font-size: .8rem; color: var(--muted); }
+.key[aria-pressed="true"] { background: var(--c); color: var(--on-c); border-color: var(--c); }
+.key:not(:disabled):hover { border-color: var(--c); }
+
+/* darslar */
+.lessons { max-width: 720px; margin: 0 auto; display: grid; gap: 12px; }
+.lesson { border: 1px solid var(--line); border-radius: 16px; background: color-mix(in srgb, var(--bg) 70%, transparent); }
+.lesson[open] { background: var(--surface); border-color: var(--c-line); }
+.lesson summary { list-style: none; cursor: pointer; padding: 16px 18px; font-weight: 700; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.lesson summary::-webkit-details-marker { display: none; }
+.lesson summary::after { content: "+"; font-family: var(--f-mono); color: var(--c); font-size: 1.3rem; line-height: 1; transition: transform .25s; }
+.lesson[open] summary::after { transform: rotate(45deg); }
+.lbody { padding: 0 18px 18px; display: grid; gap: 12px; min-width: 0; }
+.lbody p { margin: 0; }
+.tw { overflow-x: auto; max-width: 100%; }
+table { border-collapse: collapse; width: 100%; font-size: .94rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+td:nth-child(2) { color: var(--c); font-weight: 700; }
+.phr { list-style: none; margin: 0; padding: 0; }
+.phr li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.phr b { color: var(--c); }
+.phr span { color: var(--muted); }
+.tip { background: var(--c-soft); border-radius: 12px; padding: 10px 14px; font-size: .94rem; }
+pre { margin: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-family: var(--f-mono); font-size: .86rem; line-height: 1.6; }
+
+/* alifbo */
+.alpha { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; max-width: 760px; margin: 0 auto; }
+.letters { display: grid; grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); gap: 8px; }
+.letter { aspect-ratio: 1; max-width: 100%; border-radius: 12px; border: 1px solid var(--line); background: var(--glass); font-family: var(--f-display); font-weight: 700; font-size: 1.25rem; }
+.letter:not(:disabled):hover { border-color: var(--c); }
+.letter[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: var(--on-c); }
+.ldetail { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px; padding: 20px; border: 1.5px solid var(--c-line); background: var(--c-soft); border-radius: 20px; }
+.big { font-family: var(--f-display); font-weight: 700; font-size: 4.5rem; line-height: 1; color: var(--c); letter-spacing: -.04em; animation: pop .25s; }
+.ldetail .meta { display: grid; gap: 4px; min-width: 0; }
+.ldetail .snd { font-family: var(--f-mono); font-size: 1.1rem; }
+.ldetail .wd { font-size: 1.1rem; font-weight: 600; }
+.ldetail .small { color: var(--muted); font-size: .9rem; }
+
+.foot { margin-top: 26px; color: var(--muted); font-size: .85rem; }
+
+@media (max-width: 720px) {
+  .work-head { flex-direction: column; align-items: stretch; gap: 4px; padding-bottom: 14px; }
+  .work-head h2 { margin-bottom: 4px; }
+  .tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px; overflow: visible; }
+  .tab { display: flex; align-items: center; justify-content: center; text-align: center; min-width: 0; min-height: 44px; padding: 8px 6px; font-size: .88rem; line-height: 1.2; white-space: normal; border: 1px solid var(--line); border-radius: 12px; background: var(--glass); }
+  .tab:not(:disabled):hover { background: var(--glass); color: var(--fg); }
+  .tab[aria-selected="true"], .tab[aria-selected="true"]:not(:disabled):hover { background: var(--c); border-color: var(--c); color: var(--on-c); }
+}
+@media (pointer: coarse) { .tab, .ibtn, .seg button { min-height: 44px; } }
+@media (max-width: 560px) {
+  select { font-size: 16px; }
+  .body { padding: 16px; }
+  .work-head { padding: 14px 16px 14px; }
+  .card { min-height: 240px; }
+  .vrow { grid-template-columns: 1fr; }
+  .tstats { gap: 8px; }
+  .hide-s { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<div id="app" data-course="en">
+  <div class="bg" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><i class="blob b4"></i></div>
+  <div class="wrap">
+    <header class="top">
+      <div class="logo"><span class="mark" aria-hidden="true">T</span>Tilkon</div>
+      <div class="tools">
+        <button class="ibtn" data-act="voice" aria-expanded="false" aria-controls="voice">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          Ovoz
+        </button>
+        <button class="switch" id="themeSw" data-act="theme" role="switch" aria-checked="false" aria-label="Qorong‘i rejim">
+          <span class="knob">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <section class="vpanel" id="voice" hidden>
+      <h3>Ovoz sozlamasi</h3>
+      <p>Eng tabiiy diktor ovozlari odatda “Natural”, “Neural” yoki “Google” deb nomlanadi. Ovozlar qurilmangizdan olinadi, ro‘yxat telefon yoki kompyuteringizga qarab farq qiladi.</p>
+      <div class="vrow"><label for="v-en">Ingliz tili ovozi</label><select id="v-en"></select><button class="ibtn" data-act="vtest" data-i="en">Sinash</button></div>
+      <div class="vrow"><label for="v-ru">Rus tili ovozi</label><select id="v-ru"></select><button class="ibtn" data-act="vtest" data-i="ru">Sinash</button></div>
+      <div class="vrow"><label for="v-rate">Tezlik <b id="v-rate-l">0.9×</b></label><input type="range" id="v-rate" min="0.6" max="1.2" step="0.05" value="0.9"><span></span></div>
+      <p class="vmsg" id="v-msg"></p>
+    </section>
+
+    <section class="hero">
+      <h1><span class="w-en">Ingliz</span>, <span class="w-ru">rus</span> va <span class="w-it">IT</span> tillarini o‘ynab o‘rganing</h1>
+      <p>Kartochka, juftlash, gap tuzish va tez yozish mashqlari. Har kuni biroz shug‘ullansangiz, ballaringiz va seriyangiz o‘sib boradi.</p>
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <section class="courses" id="courses" aria-label="Kurslar"></section>
+
+    <section class="work">
+      <div class="work-head">
+        <h2 id="wtitle"></h2>
+        <div class="tabs" id="tabs" role="tablist"></div>
+      </div>
+      <div class="body" id="body"></div>
+    </section>
+
+    <p class="foot">Natijalaringiz shu brauzerda saqlanadi.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  var DAILY = 40;
+
+  var COURSES = {
+    en: {
+      name: 'Ingliz tili', glyph: 'Aa', unit: 'so‘z',
+      sub: 'Kundalik so‘zlar, to be, Present Simple',
+      qprompt: 'Bu so‘zning o‘zbekcha tarjimasi qaysi?',
+      words: [
+        { f: 'hello', uz: 'salom', ex: 'Hello, my name is Ali.' },
+        { f: 'thank you', uz: 'rahmat', ex: 'Thank you for your help.' },
+        { f: 'please', uz: 'iltimos', ex: 'Please, sit down.' },
+        { f: 'water', uz: 'suv', ex: 'I drink water every morning.' },
+        { f: 'book', uz: 'kitob', ex: 'This book is very interesting.' },
+        { f: 'friend', uz: 'do‘st', ex: 'She is my best friend.' },
+        { f: 'house', uz: 'uy', ex: 'Our house is near the park.' },
+        { f: 'work', uz: 'ish; ishlamoq', ex: 'I work at a bank.' },
+        { f: 'learn', uz: 'o‘rganmoq', ex: 'We learn English online.' },
+        { f: 'today', uz: 'bugun', ex: 'Today is Monday.' },
+        { f: 'tomorrow', uz: 'ertaga', ex: 'See you tomorrow!' },
+        { f: 'family', uz: 'oila', ex: 'My family is big.' },
+        { f: 'city', uz: 'shahar', ex: 'Tashkent is a large city.' },
+        { f: 'time', uz: 'vaqt', ex: 'What time is it?' },
+        { f: 'delicious', uz: 'mazali', ex: 'The plov is delicious.' },
+        { f: 'beautiful', uz: 'chiroyli', ex: 'What a beautiful day!' },
+        { f: 'difficult', uz: 'qiyin', ex: 'This exercise is difficult.' },
+        { f: 'always', uz: 'doim', ex: 'He always comes on time.' },
+        { f: 'because', uz: 'chunki', ex: 'I stay home because it rains.' },
+        { f: 'meeting', uz: 'uchrashuv', ex: 'The meeting starts at ten.' }
+      ],
+      lessons: [
+        { t: 'To be fe’li: am, is, are', html: '<p>Ingliz tilida “bo‘lmoq” fe’li olmoshga qarab o‘zgaradi. Bu birinchi o‘rganiladigan qoida.</p><div class="tw"><table><thead><tr><th>Olmosh</th><th>Shakl</th><th>Misol</th></tr></thead><tbody><tr><td>I</td><td>am</td><td>I am a student.</td></tr><tr><td>you</td><td>are</td><td>You are late.</td></tr><tr><td>he / she / it</td><td>is</td><td>She is a doctor.</td></tr><tr><td>we</td><td>are</td><td>We are friends.</td></tr><tr><td>they</td><td>are</td><td>They are at home.</td></tr></tbody></table></div><p class="tip">Og‘zaki nutqda qisqartiriladi: I’m, you’re, she’s, we’re.</p>' },
+        { t: 'Salomlashish va xayrlashish', html: '<ul class="phr"><li><b>Good morning!</b><span>Xayrli tong!</span></li><li><b>How are you?</b><span>Ishlar qanday?</span></li><li><b>I’m fine, thanks.</b><span>Yaxshi, rahmat.</span></li><li><b>Nice to meet you.</b><span>Tanishganimdan xursandman.</span></li><li><b>See you later.</b><span>Ko‘rishguncha.</span></li></ul>' },
+        { t: 'Present Simple: odatiy ishlar', html: '<p>Doimiy va takrorlanadigan ishlar uchun ishlatiladi. <b>he / she / it</b> bilan fe’lga <b>-s</b> qo‘shiladi.</p><ul class="phr"><li><b>I work.</b><span>Men ishlayman.</span></li><li><b>She works.</b><span>U ishlaydi.</span></li><li><b>She doesn’t work.</b><span>U ishlamaydi.</span></li><li><b>Does she work?</b><span>U ishlaydimi?</span></li></ul><p class="tip">Inkor va so‘roqda do/does keladi, asosiy fe’l -s siz qoladi.</p>' }
+      ]
+    },
+    ru: {
+      name: 'Rus tili', glyph: 'Яя', unit: 'so‘z',
+      sub: 'Alifbo, salomlashish, olmoshlar, jins',
+      qprompt: 'Bu so‘zning o‘zbekcha tarjimasi qaysi?',
+      words: [
+        { f: 'привет', tr: 'privet', uz: 'salom', ex: 'Привет! Как дела?', exUz: 'Salom! Ishlar qalay?' },
+        { f: 'спасибо', tr: 'spasibo', uz: 'rahmat', ex: 'Спасибо за помощь.', exUz: 'Yordam uchun rahmat.' },
+        { f: 'пожалуйста', tr: 'pojaluysta', uz: 'iltimos; marhamat', ex: 'Садитесь, пожалуйста.', exUz: 'Marhamat, o‘tiring.' },
+        { f: 'вода', tr: 'voda', uz: 'suv', ex: 'Я пью воду.', exUz: 'Men suv ichaman.' },
+        { f: 'книга', tr: 'kniga', uz: 'kitob', ex: 'Это моя книга.', exUz: 'Bu mening kitobim.' },
+        { f: 'друг', tr: 'drug', uz: 'do‘st', ex: 'Он мой друг.', exUz: 'U mening do‘stim.' },
+        { f: 'дом', tr: 'dom', uz: 'uy', ex: 'Мой дом рядом.', exUz: 'Uyim yaqin.' },
+        { f: 'работа', tr: 'rabota', uz: 'ish', ex: 'Я иду на работу.', exUz: 'Men ishga ketyapman.' },
+        { f: 'учиться', tr: 'uchitsya', uz: 'o‘qimoq', ex: 'Я учусь в университете.', exUz: 'Men universitetda o‘qiyman.' },
+        { f: 'сегодня', tr: 'sevodnya', uz: 'bugun', ex: 'Сегодня тепло.', exUz: 'Bugun iliq.' },
+        { f: 'завтра', tr: 'zavtra', uz: 'ertaga', ex: 'До завтра!', exUz: 'Ertagacha!' },
+        { f: 'семья', tr: 'semya', uz: 'oila', ex: 'У меня большая семья.', exUz: 'Mening katta oilam bor.' },
+        { f: 'город', tr: 'gorod', uz: 'shahar', ex: 'Это большой город.', exUz: 'Bu katta shahar.' },
+        { f: 'время', tr: 'vremya', uz: 'vaqt', ex: 'У меня нет времени.', exUz: 'Mening vaqtim yo‘q.' },
+        { f: 'вкусно', tr: 'vkusno', uz: 'mazali', ex: 'Очень вкусно!', exUz: 'Juda mazali!' },
+        { f: 'красивый', tr: 'krasivıy', uz: 'chiroyli', ex: 'Красивый город.', exUz: 'Chiroyli shahar.' },
+        { f: 'трудно', tr: 'trudno', uz: 'qiyin', ex: 'Это трудно.', exUz: 'Bu qiyin.' },
+        { f: 'всегда', tr: 'vsegda', uz: 'doim', ex: 'Он всегда приходит вовремя.', exUz: 'U doim o‘z vaqtida keladi.' },
+        { f: 'потому что', tr: 'potomu chto', uz: 'chunki', ex: 'Я дома, потому что идёт дождь.', exUz: 'Yomg‘ir yog‘ayotgani uchun uydaman.' },
+        { f: 'встреча', tr: 'vstrecha', uz: 'uchrashuv', ex: 'Встреча в десять часов.', exUz: 'Uchrashuv soat o‘nda.' }
+      ],
+      lessons: [
+        { t: 'Salomlashish', html: '<ul class="phr"><li><b>Здравствуйте</b><span>Assalomu alaykum (rasmiy)</span></li><li><b>Привет</b><span>Salom (do‘stona)</span></li><li><b>Доброе утро</b><span>Xayrli tong</span></li><li><b>Добрый вечер</b><span>Xayrli kech</span></li><li><b>До свидания</b><span>Xayr, ko‘rishguncha</span></li><li><b>Пока</b><span>Hozircha (do‘stona)</span></li></ul>' },
+        { t: 'Olmoshlar', html: '<div class="tw"><table><thead><tr><th>Rus</th><th>Talaffuz</th><th>O‘zbekcha</th></tr></thead><tbody><tr><td>я</td><td>ya</td><td>men</td></tr><tr><td>ты</td><td>tı</td><td>sen</td></tr><tr><td>он</td><td>on</td><td>u (erkak)</td></tr><tr><td>она</td><td>ana</td><td>u (ayol)</td></tr><tr><td>мы</td><td>mı</td><td>biz</td></tr><tr><td>вы</td><td>vı</td><td>siz</td></tr><tr><td>они</td><td>ani</td><td>ular</td></tr></tbody></table></div><p class="tip">“Вы” hurmat bilan bitta odamga ham aytiladi, xuddi o‘zbekchadagi “siz” kabi.</p>' },
+        { t: 'Jins: erkak, ayol, o‘rta', html: '<p>Rus tilida har bir ot uchta jinsdan biriga kiradi. Ko‘p hollarda oxiriga qarab bilish mumkin.</p><div class="tw"><table><thead><tr><th>Jins</th><th>Oxiri</th><th>Misol</th></tr></thead><tbody><tr><td>erkak</td><td>undosh</td><td>стол, дом</td></tr><tr><td>ayol</td><td>-а / -я</td><td>книга, семья</td></tr><tr><td>o‘rta</td><td>-о / -е</td><td>окно, море</td></tr></tbody></table></div><p class="tip">Egalik so‘zi ham o‘zgaradi: мой стол, моя книга, моё окно.</p>' }
+      ]
+    },
+    it: {
+      name: 'IT va dasturlash', glyph: '{ }', unit: 'atama',
+      sub: 'Asosiy atamalar, HTML, JavaScript',
+      qprompt: 'Bu atama nimani anglatadi?',
+      words: [
+        { f: 'algorithm', uz: 'masalani yechish qadamlari', ex: 'Retsept ham algoritm: qadamlar ketma-ket bajariladi.' },
+        { f: 'variable', uz: 'qiymat saqlovchi nom', ex: 'let age = 25;' },
+        { f: 'function', uz: 'qayta ishlatiladigan kod bloki', ex: 'function hello() { return "Salom"; }' },
+        { f: 'browser', uz: 'sahifalarni ochuvchi dastur', ex: 'Chrome, Firefox, Safari.' },
+        { f: 'server', uz: 'so‘rovga javob beruvchi kompyuter', ex: 'Saytni ochsangiz, server sahifani yuboradi.' },
+        { f: 'IP address', uz: 'qurilmaning tarmoqdagi manzili', ex: '192.168.0.1' },
+        { f: 'database', uz: 'tartiblangan ma’lumotlar ombori', ex: 'Foydalanuvchilar ro‘yxati bazada saqlanadi.' },
+        { f: 'bug', uz: 'dasturdagi xato', ex: 'Tugma bosilganda ilova yopilib qolsa, bu bug.' },
+        { f: 'frontend', uz: 'foydalanuvchi ko‘radigan qism', ex: 'HTML, CSS, JavaScript.' },
+        { f: 'backend', uz: 'serverdagi ichki mantiq', ex: 'Parolni tekshirish backendda bo‘ladi.' },
+        { f: 'API', uz: 'dasturlar o‘zaro gaplashadigan interfeys', ex: 'Ob-havo ilovasi ma’lumotni API orqali oladi.' },
+        { f: 'cloud', uz: 'internetdagi masofaviy saqlash', ex: 'Google Drive fayllarni bulutda saqlaydi.' },
+        { f: 'cache', uz: 'tez ochish uchun saqlangan nusxa', ex: 'Sayt ikkinchi marta tezroq ochiladi.' },
+        { f: 'Git', uz: 'kod o‘zgarishlarini kuzatuvchi tizim', ex: 'git commit -m "birinchi versiya"' },
+        { f: 'loop', uz: 'amalni takrorlovchi tuzilma', ex: 'for (let i = 0; i < 3; i++) { }' },
+        { f: 'array', uz: 'qiymatlar ro‘yxati', ex: '["olma", "nok", "uzum"]' },
+        { f: 'encryption', uz: 'ma’lumotni shifrlash', ex: 'HTTPS trafikni shifrlaydi.' },
+        { f: 'compiler', uz: 'kodni mashina tiliga o‘giruvchi', ex: 'C++ kodini ishga tushadigan faylga aylantiradi.' },
+        { f: 'open source', uz: 'kodi hammaga ochiq dastur', ex: 'Linux ochiq kodli tizim.' },
+        { f: 'debugging', uz: 'xatolarni topib tuzatish', ex: 'console.log() bilan qiymatni tekshirish.' }
+      ],
+      snips: [
+        { text: 'let age = 25;', uz: 'o‘zgaruvchi e’lon qilish' },
+        { text: 'console.log("Salom");', uz: 'konsolga yozish' },
+        { text: '<h1>Salom</h1>', uz: 'HTML sarlavha' },
+        { text: 'git commit -m "first"', uz: 'o‘zgarishni saqlash' },
+        { text: 'const sum = (a, b) => a + b;', uz: 'qo‘shish funksiyasi' },
+        { text: 'if (age >= 18) { ok(); }', uz: 'shart operatori' },
+        { text: 'for (let i = 0; i < 3; i++) {}', uz: 'takrorlash sikli' },
+        { text: 'document.querySelector(".btn")', uz: 'elementni topish' },
+        { text: 'npm install react', uz: 'paket o‘rnatish' },
+        { text: 'SELECT name FROM users;', uz: 'bazadan o‘qish (SQL)' }
+      ],
+      lessons: [
+        { t: 'Kompyuter qismlari', html: '<div class="tw"><table><thead><tr><th>Qism</th><th>Vazifasi</th><th>Oddiy tushuncha</th></tr></thead><tbody><tr><td>CPU</td><td>hisoblash</td><td>kompyuterning miyasi</td></tr><tr><td>RAM</td><td>ish xotirasi</td><td>o‘chsa, ma’lumot yo‘qoladi</td></tr><tr><td>SSD</td><td>doimiy xotira</td><td>fayllar shu yerda turadi</td></tr><tr><td>GPU</td><td>grafika</td><td>o‘yin va video uchun</td></tr></tbody></table></div><p class="tip">Dastur ishlaganda SSD dan RAM ga yuklanadi, CPU esa uni bajaradi.</p>' },
+        { t: 'Birinchi HTML sahifa', html: '<p>HTML sahifa tuzilmasini belgilaydi. Quyidagi kodni <b>sahifa.html</b> nomli faylga saqlab, brauzerda oching.</p>', code: '<h1>Salom, dunyo!</h1>\n<p>Bu mening birinchi sahifam.</p>\n<button>Bosing</button>' },
+        { t: 'O‘zgaruvchi va shart (JavaScript)', html: '<p>O‘zgaruvchi qiymatni saqlaydi, <b>if</b> esa qiymatga qarab qaror qiladi.</p>', code: 'let age = 18;\n\nif (age >= 18) {\n  console.log("Kirish mumkin");\n} else {\n  console.log("Hali erta");\n}' }
+      ]
+    }
+  };
+
+  var ALPHA = [
+    ['А','a','арбуз','tarvuz'],['Б','b','банан','banan'],['В','v','вода','suv'],['Г','g','город','shahar'],['Д','d','дом','uy'],
+    ['Е','ye','еда','ovqat'],['Ё','yo','ёлка','archa'],['Ж','j','жук','qo‘ng‘iz'],['З','z','зима','qish'],['И','i','игра','o‘yin'],
+    ['Й','y (qisqa i)','йогурт','yogurt'],['К','k','книга','kitob'],['Л','l','лампа','chiroq'],['М','m','мама','ona'],['Н','n','нос','burun'],
+    ['О','o','окно','deraza'],['П','p','папа','ota'],['Р','r','рука','qo‘l'],['С','s','сок','sharbat'],['Т','t','торт','tort'],
+    ['У','u','утро','ertalab'],['Ф','f','фото','surat'],['Х','x','хлеб','non'],['Ц','ts','цирк','sirk'],['Ч','ch','чай','choy'],
+    ['Ш','sh','шапка','qalpoq'],['Щ','shch (uzun sh)','щенок','kuchukcha'],['Ъ','qattiq belgi, tovushsiz','объект','ob’yekt'],
+    ['Ы','ı (i va u orasida)','рыба','baliq'],['Ь','yumshoq belgi, tovushsiz','день','kun'],['Э','e','этаж','qavat'],['Ю','yu','юг','janub'],['Я','ya','яблоко','olma']
+  ];
+  var KB = ['йцукенгшщзхъ', 'фывапролджэ', 'ячсмитьбюё'];
+
+  /* ---------- holat ---------- */
+  var KEY = 'tilkon-v1';
+  var store = {
+    course: 'en', theme: null, known: { en: [], ru: [], it: [] },
+    xp: 0, streak: 0, last: '', day: { d: '', xp: 0 },
+    best: { en: 0, ru: 0, it: 0 }, voice: { en: '', ru: '', rate: 0.9 }
+  };
+  try {
+    var raw = localStorage.getItem(KEY) || localStorage.getItem('uchtil-v1');
+    if (raw) {
+      var p = JSON.parse(raw);
+      if (p && COURSES[p.course]) store.course = p.course;
+      if (p && (p.theme === 'light' || p.theme === 'dark')) store.theme = p.theme;
+      if (p && p.known) ['en', 'ru', 'it'].forEach(function (k) { if (Array.isArray(p.known[k])) store.known[k] = p.known[k]; });
+      if (p && typeof p.xp === 'number') store.xp = p.xp;
+      if (p && typeof p.streak === 'number') store.streak = p.streak;
+      if (p && typeof p.last === 'string') store.last = p.last;
+      if (p && p.day && typeof p.day.d === 'string') store.day = { d: p.day.d, xp: +p.day.xp || 0 };
+      if (p && p.best) ['en', 'ru', 'it'].forEach(function (k) { if (typeof p.best[k] === 'number') store.best[k] = p.best[k]; });
+      if (p && p.voice) { store.voice.en = p.voice.en || ''; store.voice.ru = p.voice.ru || ''; if (typeof p.voice.rate === 'number') store.voice.rate = p.voice.rate; }
+    }
+  } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+
+  var ui = { tab: 'cards', idx: 0, flip: false, only: false, anim: '', quiz: null, match: null, sent: null, type: null, tmode: 'word', tick: 0, letter: 0, focus: null, shift: false };
+  var C = function () { return COURSES[store.course]; };
+  var lk = function () { return store.course === 'ru' ? 'ru' : 'en'; };
+  var deck = function () {
+    var known = store.known[store.course];
+    return ui.only ? C().words.filter(function (w) { return known.indexOf(w.f) < 0; }) : C().words;
+  };
+  var shuffle = function (a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  var ymd = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+
+  /* ---------- ball va seriya ---------- */
+  function touchDay() {
+    var t = ymd(new Date());
+    if (store.day.d !== t) store.day = { d: t, xp: 0 };
+    if (store.last !== t) {
+      var y = ymd(new Date(Date.now() - 864e5));
+      store.streak = store.last === y ? store.streak + 1 : 1;
+      store.last = t;
+    }
+  }
+  function addXp(n) { touchDay(); store.xp += n; store.day.xp += n; save(); renderStats(); }
+  function renderStats() {
+    var t = ymd(new Date()), y = ymd(new Date(Date.now() - 864e5));
+    var st = (store.last === t || store.last === y) ? store.streak : 0;
+    var dx = store.day.d === t ? store.day.xp : 0;
+    var known = store.known.en.length + store.known.ru.length + store.known.it.length;
+    var pct = Math.round(Math.min(dx, DAILY) / DAILY * 100);
+    $('stats').innerHTML =
+      '<div class="chip"><b>' + st + '</b><span>kun seriya</span></div>' +
+      '<div class="chip"><b>' + store.xp + '</b><span>ball</span></div>' +
+      '<div class="chip"><b>' + known + '</b><span>o‘rganildi</span></div>' +
+      '<div class="chip goal"><span>Bugungi maqsad</span><b>' + Math.min(dx, DAILY) + ' / ' + DAILY + '</b><div class="bar"><i style="width:' + pct + '%"></i></div></div>';
+  }
+
+  /* ---------- tema ---------- */
+  function isDark() {
+    var a = document.documentElement.getAttribute('data-theme');
+    if (a === 'dark') return true;
+    if (a === 'light') return false;
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; }
+  }
+  function syncTheme() { $('themeSw').setAttribute('aria-checked', String(isDark())); }
+  function toggleTheme() {
+    var next = isDark() ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    store.theme = next; save(); syncTheme();
+  }
+  if (store.theme) document.documentElement.setAttribute('data-theme', store.theme);
+  try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncTheme); } catch (e) {}
+
+  /* ---------- ovoz ---------- */
+  var SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+  var canSpeak = function () { try { return 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function'; } catch (e) { return false; } };
+  function allVoices() { try { return window.speechSynthesis.getVoices() || []; } catch (e) { return []; } }
+  function vscore(v) {
+    var n = (v.name || '').toLowerCase(), s = 0;
+    if (/natural|neural|online/.test(n)) s += 6;
+    if (/premium|enhanced|siri/.test(n)) s += 4;
+    if (/google/.test(n)) s += 3;
+    if (/microsoft/.test(n)) s += 1;
+    if (/samantha|daniel|karen|serena|alex|aria|jenny|guy|milena|yuri|svetlana|dmitry|dariya|katya|irina|pavel/.test(n)) s += 2;
+    if (v.localService === false) s += 1;
+    if (/en[-_](us|gb)/i.test(v.lang || '')) s += 1;
+    return s;
+  }
+  function voicesFor(key) {
+    return allVoices().filter(function (v) { return (v.lang || '').toLowerCase().replace('_', '-').indexOf(key) === 0; })
+      .sort(function (a, b) { return vscore(b) - vscore(a); });
+  }
+  function pickVoice(key) {
+    var list = voicesFor(key), want = store.voice[key];
+    if (want) for (var i = 0; i < list.length; i++) if (list[i].name === want) return list[i];
+    return list[0] || null;
+  }
+  function toast() {}
+  function say(text, voice, fallbackLang) {
+    try {
+      var u = new SpeechSynthesisUtterance(text), ss = window.speechSynthesis;
+      if (voice) u.voice = voice;
+      u.lang = voice ? voice.lang : fallbackLang;
+      u.rate = store.voice.rate || 0.9; u.pitch = 1; u.volume = 1;
+      u.onerror = function (ev) {
+        if (ev && ev.error && ev.error !== 'canceled' && ev.error !== 'interrupted') toast('Ovoz chiqmadi. Qurilmangizda bu til uchun ovoz bo‘lmasligi mumkin.');
+      };
+      ss.cancel();
+      setTimeout(function () { try { ss.resume(); ss.speak(u); } catch (e) {} }, 70);
+    } catch (e) {}
+  }
+  var CY = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sh', 'ъ': '', 'ы': 'i', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
+  function translit(text) {
+    var low = String(text).toLowerCase(), out = '', prev = ' ';
+    for (var i = 0; i < low.length; i++) {
+      var ch = low.charAt(i);
+      if (ch === 'е') out += /[\s,.!?;:()\-аеёиоуыэюяъь]/.test(prev) ? 'ye' : 'e';
+      else if (CY.hasOwnProperty(ch)) out += CY[ch];
+      else out += ch;
+      prev = ch;
+    }
+    return out;
+  }
+  function speak(text, key, tr) {
+    if (!canSpeak()) return;
+    var v = pickVoice(key);
+    if (v) { say(text, v, key === 'ru' ? 'ru-RU' : 'en-US'); return; }
+    if (key === 'ru') {
+      var alt = voicesFor('uz')[0] || voicesFor('tr')[0] || voicesFor('en')[0] || null;
+      say(tr ? tr.replace(/ı/g, 'i') : translit(text), alt, 'en-US');
+      return;
+    }
+    say(text, null, 'en-US');
+  }
+  function renderVoice() {
+    ['en', 'ru'].forEach(function (key) {
+      var list = voicesFor(key), sel = $('v-' + key);
+      sel.innerHTML = '<option value="">Avto (eng yaxshisi)</option>' + list.map(function (v) {
+        return '<option value="' + esc(v.name) + '">' + esc(v.name) + ' · ' + esc(v.lang) + '</option>';
+      }).join('');
+      sel.value = store.voice[key] || '';
+    });
+    $('v-rate').value = store.voice.rate; $('v-rate-l').textContent = store.voice.rate.toFixed(2).replace(/0$/, '') + '×';
+    var msg = '';
+    if (!canSpeak()) msg = 'Bu brauzer ovozli o‘qishni qo‘llamaydi.';
+    else if (!allVoices().length) msg = 'Ovozlar yuklanmoqda yoki qurilmangizda ovoz topilmadi.';
+    else if (!voicesFor('ru').length) msg = 'Qurilmangizda rus ovozi topilmadi. Telefon sozlamalarida “Matndan nutqqa” bo‘limidan rus ovozini yuklab oling.';
+    $('v-msg').textContent = msg;
+  }
+  try { window.speechSynthesis.addEventListener('voiceschanged', renderVoice); } catch (e) {}
+  $('voice').addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id === 'v-en') store.voice.en = t.value;
+    else if (t.id === 'v-ru') store.voice.ru = t.value;
+    save();
+  });
+  $('voice').addEventListener('input', function (e) {
+    if (e.target.id === 'v-rate') {
+      store.voice.rate = +e.target.value; $('v-rate-l').textContent = store.voice.rate.toFixed(2).replace(/0$/, '') + '×'; save();
+    }
+  });
+
+  /* ---------- effektlar ---------- */
+  var SPARKS = ['var(--en)', 'var(--ru)', 'var(--it)', '#FFC24B'];
+  function burst(x, y) {
+    if (reduce) return;
+    for (var i = 0; i < 14; i++) {
+      var s = document.createElement('i'), ang = Math.random() * 6.283, d = 40 + Math.random() * 70;
+      s.className = 'spark'; s.style.left = x + 'px'; s.style.top = y + 'px';
+      s.style.setProperty('--dx', Math.cos(ang) * d + 'px'); s.style.setProperty('--dy', Math.sin(ang) * d + 'px');
+      s.style.background = SPARKS[i % 4];
+      document.body.appendChild(s);
+      (function (n) { setTimeout(function () { n.remove(); }, 750); })(s);
+    }
+  }
+  function burstEl(el) { if (!el) return; var r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); }
+  $('app').addEventListener('pointerdown', function (e) {
+    if (reduce) return;
+    var b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    var r = b.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2, s = document.createElement('span');
+    s.className = 'ripple'; s.style.width = s.style.height = d + 'px';
+    s.style.left = (e.clientX - r.left - d / 2) + 'px'; s.style.top = (e.clientY - r.top - d / 2) + 'px';
+    b.appendChild(s);
+    setTimeout(function () { s.remove(); }, 550);
+  });
+
+  /* ---------- kartochkalar ---------- */
+  function viewCards() {
+    var d = deck(), known = store.known[store.course], total = C().words.length, c = store.course;
+    var top = '<div class="toolbar"><div class="seg" role="group" aria-label="Filtr">' +
+      '<button data-act="filter" data-v="all" aria-pressed="' + (!ui.only) + '">Hammasi</button>' +
+      '<button data-act="filter" data-v="un" aria-pressed="' + ui.only + '">Bilmaganlarim</button></div>' +
+      '<span class="count">' + known.length + ' / ' + total + ' ' + C().unit + ' o‘rganildi</span></div>';
+    if (!d.length) {
+      return top + '<div class="empty"><h3>Hammasini bilasiz</h3><p>Bu kursdagi barcha kartochkalar o‘rganilgan deb belgilangan. Boshidan boshlang yoki boshqa mashqni sinang.</p><button class="btn fill" data-act="reset">Boshidan boshlash</button></div>';
+    }
+    ui.idx = Math.min(ui.idx, d.length - 1);
+    var w = d[ui.idx];
+    var face = ui.flip
+      ? '<span class="tag">Tarjima</span><span class="ans">' + esc(w.uz) + '</span>' + (w.ex ? '<span class="ex">' + esc(w.ex) + '</span>' : '') + (w.exUz ? '<span class="exuz">' + esc(w.exUz) + '</span>' : '')
+      : '<span class="tag">' + (c === 'it' ? 'Atama' : 'So‘z') + '</span><span class="q">' + esc(w.f) + '</span>' + (w.tr ? '<span class="tr">[' + esc(w.tr) + ']</span>' : '') + '<span class="hint">Aylantirish uchun bosing</span>';
+    var pct = Math.round(((ui.idx + 1) / d.length) * 100);
+    var exBtn = (ui.flip && c !== 'it' && w.ex && canSpeak()) ? '<button class="ibtn" data-act="speak" data-v="ex">' + SPEAKER + 'Misol</button>' : '';
+    return top + '<div class="stage">' +
+      '<div class="pos"><span>' + (ui.idx + 1) + ' / ' + d.length + '</span><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
+      '<button class="card ' + (ui.flip ? 'back ' : '') + ui.anim + '" data-act="flip" aria-label="Kartani aylantirish">' + face + '</button>' +
+      '<div class="row"><button class="ibtn" data-act="prev" aria-label="Oldingi karta">←</button>' +
+      (canSpeak() ? '<button class="ibtn" data-act="speak" data-v="w">' + SPEAKER + 'So‘z</button>' : '') + exBtn +
+      '<button class="ibtn" data-act="next" aria-label="Keyingi karta">→</button></div>' +
+      '<div class="pair"><button class="btn" data-act="again">Takrorlayman</button><button class="btn fill" data-act="know">Bilaman</button></div></div>';
+  }
+
+  /* ---------- test ---------- */
+  function buildQuiz() {
+    var words = C().words, picks = shuffle(words).slice(0, 8);
+    ui.quiz = {
+      i: 0, score: 0, picked: null,
+      qs: picks.map(function (w) {
+        var others = shuffle(words.filter(function (x) { return x.uz !== w.uz; })).slice(0, 3).map(function (x) { return x.uz; });
+        return { f: w.f, tr: w.tr, correct: w.uz, opts: shuffle(others.concat([w.uz])) };
+      })
+    };
+  }
+  function viewQuiz() {
+    var q = ui.quiz;
+    if (!q) return '<div class="quiz"><div class="empty"><h3>8 ta savol, 4 ta javob</h3><p>Savollar kartochkalardagi ' + C().unit + 'lardan tuziladi. Har safar tartib boshqacha bo‘ladi.</p><button class="btn fill" data-act="qstart">Testni boshlash</button></div></div>';
+    if (q.i >= q.qs.length) {
+      var pct = Math.round((q.score / q.qs.length) * 100);
+      var msg = pct >= 80 ? 'Zo‘r natija!' : pct >= 50 ? 'Yaxshi. Yana bir marta takrorlang.' : 'Kartochkalarga qaytib, takrorlang.';
+      return '<div class="quiz"><div class="empty"><div class="score">' + q.score + ' / ' + q.qs.length + '</div><h3>' + msg + '</h3><button class="btn fill" data-act="qstart">Qayta ishlash</button></div></div>';
+    }
+    var cur = q.qs[q.i];
+    var opts = cur.opts.map(function (o, i) {
+      var cls = 'opt';
+      if (q.picked !== null) cls += o === cur.correct ? ' ok' : (i === q.picked ? ' bad' : ' dim');
+      return '<button class="' + cls + '" data-act="qpick" data-i="' + i + '"' + (q.picked !== null ? ' disabled' : '') + '>' + esc(o) + '</button>';
+    }).join('');
+    var next = q.picked !== null ? '<button class="btn fill" data-act="qnext">' + (q.i === q.qs.length - 1 ? 'Natijani ko‘rish' : 'Keyingi savol') + '</button>' : '';
+    return '<div class="quiz"><div class="pos"><span>Savol ' + (q.i + 1) + ' / ' + q.qs.length + '</span><div class="bar"><i style="width:' + Math.round((q.i / q.qs.length) * 100) + '%"></i></div></div>' +
+      '<div><div class="qprompt">' + C().qprompt + '</div><div class="qword">' + esc(cur.f) + '</div>' + (cur.tr ? '<div class="tr">[' + esc(cur.tr) + ']</div>' : '') + '</div>' +
+      '<div class="opts">' + opts + '</div>' + next + '</div>';
+  }
+
+  /* ---------- juftlash ---------- */
+  function buildMatch() {
+    var ws = shuffle(C().words).slice(0, 6), idx = ws.map(function (w, i) { return i; });
+    ui.match = { ws: ws, L: shuffle(idx), R: shuffle(idx), sl: null, sr: null, done: [], moves: 0, start: Date.now(), end: 0, bad: null };
+  }
+  function viewMatch() {
+    var m = ui.match;
+    if (!m) return '<div class="quiz"><div class="empty"><h3>Juftlab o‘ynang</h3><p>Chapdagi ' + C().unit + 'ni o‘ngdagi tarjimasi bilan juftlang. 6 ta juftlik, vaqt hisoblanadi.</p><button class="btn fill" data-act="mstart">Boshlash</button></div></div>';
+    if (m.done.length === m.ws.length) {
+      var sec = Math.max(1, Math.round((m.end - m.start) / 1000));
+      return '<div class="quiz"><div class="empty"><div class="score">' + sec + ' s</div><h3>Barakalla! ' + m.moves + ' ta urinishda topdingiz.</h3><button class="btn fill" data-act="mstart">Yana o‘ynash</button></div></div>';
+    }
+    function col(side, order) {
+      return '<div class="mcol">' + order.map(function (i) {
+        var done = m.done.indexOf(i) >= 0, sel = (side === 'L' ? m.sl : m.sr) === i;
+        var bad = m.bad && (side === 'L' ? m.bad[0] : m.bad[1]) === i;
+        return '<button class="mt' + (done ? ' done' : sel ? ' sel' : '') + (bad ? ' shake' : '') + '" data-act="m' + side + '" data-i="' + i + '"' + (done ? ' disabled' : '') + '>' + esc(side === 'L' ? m.ws[i].f : m.ws[i].uz) + '</button>';
+      }).join('') + '</div>';
+    }
+    return '<div class="minfo"><span>' + m.done.length + ' / ' + m.ws.length + ' juftlik</span><span>' + m.moves + ' urinish</span></div>' +
+      '<div class="mgrid">' + col('L', m.L) + col('R', m.R) + '</div>';
+  }
+
+  /* ---------- gap tuzish ---------- */
+  function sents() {
+    if (store.course === 'it') return C().snips;
+    return C().words.map(function (w) { return { text: w.ex, uz: w.exUz || '' }; });
+  }
+  function initSentItem() {
+    var s = ui.sent, it = s.items[s.i];
+    s.toks = it.text.split(' ');
+    s.pool = shuffle(s.toks.map(function (t, i) { return i; }));
+    s.ans = []; s.res = null;
+  }
+  function buildSent() {
+    ui.sent = { items: shuffle(sents()).slice(0, 6), i: 0, score: 0 };
+    initSentItem();
+  }
+  function viewBuild() {
+    var s = ui.sent, c = store.course, label = c === 'it' ? 'Kod tuzish' : 'Gap tuzish';
+    if (!s) return '<div class="quiz"><div class="empty"><h3>' + label + '</h3><p>' + (c === 'it' ? 'Aralash berilgan bo‘laklardan to‘g‘ri kod qatorini yig‘ing.' : 'Aralash berilgan so‘zlarni bosib, to‘g‘ri tartibda gap tuzing.') + '</p><button class="btn fill" data-act="sstart">Boshlash</button></div></div>';
+    if (s.i >= s.items.length) return '<div class="quiz"><div class="empty"><div class="score">' + s.score + ' / ' + s.items.length + '</div><h3>' + (s.score >= 5 ? 'Zo‘r natija!' : 'Yaxshi urinish!') + '</h3><button class="btn fill" data-act="sstart">Qayta o‘ynash</button></div></div>';
+    var it = s.items[s.i], mono = c === 'it' ? ' mono' : '';
+    var ans = s.ans.map(function (ti, pos) { return '<button class="tok' + mono + '" data-act="sa" data-i="' + pos + '"' + (s.res ? ' disabled' : '') + '>' + esc(s.toks[ti]) + '</button>'; }).join('');
+    var pool = s.pool.map(function (ti) { return '<button class="tok' + mono + '" data-act="sp" data-i="' + ti + '">' + esc(s.toks[ti]) + '</button>'; }).join('');
+    var fb = '', act = '';
+    if (s.res === 'ok') { fb = '<div class="fb ok">To‘g‘ri!</div>'; act = '<button class="btn fill" data-act="snext">Keyingisi</button>'; }
+    if (s.res === 'bad') { fb = '<div class="fb bad">To‘g‘ri javob: <b>' + esc(it.text) + '</b></div>'; act = '<div class="pair"><button class="btn" data-act="sretry">Qayta urinish</button><button class="btn fill" data-act="snext">Keyingisi</button></div>'; }
+    var prompt = it.uz ? '<b>' + esc(it.uz) + '</b>' : 'Gapni to‘g‘ri tartibda joylashtiring';
+    return '<div class="build"><div class="pos"><span>' + (s.i + 1) + ' / ' + s.items.length + '</span><div class="bar"><i style="width:' + Math.round((s.i / s.items.length) * 100) + '%"></i></div></div>' +
+      '<div class="tprompt">' + prompt + '</div>' +
+      '<div class="answer' + (s.res ? ' ' + s.res : '') + '">' + (ans || '<span class="tr">Bo‘laklarni shu yerga joylang</span>') + '</div>' +
+      '<div class="chips">' + pool + '</div>' + fb +
+      ((c !== 'it' && canSpeak()) ? '<div class="row"><button class="ibtn" data-act="sspeak">' + SPEAKER + 'Gapni eshitish</button></div>' : '') + act + '</div>';
+  }
+
+  /* ---------- yozish ---------- */
+  function eq(a, b, mode) { return mode === 'sentence' ? a === b : (a || '').toLowerCase() === (b || '').toLowerCase(); }
+  function startTick() { stopTick(); ui.tick = setInterval(tstats, 300); }
+  function stopTick() { if (ui.tick) { clearInterval(ui.tick); ui.tick = 0; } }
+  function buildType() {
+    var mode = ui.tmode, items;
+    if (mode === 'sentence') {
+      items = shuffle(sents()).slice(0, 6).map(function (s) { return { target: s.text, prompt: s.uz || 'Gapni ko‘chirib yozing', show: true }; });
+    } else {
+      items = shuffle(C().words).slice(0, 8).map(function (w) { return { target: w.f, prompt: w.uz, tr: w.tr, show: mode === 'word', listen: mode === 'listen' }; });
+    }
+    ui.type = { mode: mode, items: items, i: 0, start: 0, keys: 0, wrong: 0, typed: 0, prev: 0, done: false, spokenFor: -1 };
+    startTick();
+  }
+  function targetHtml() {
+    var t = ui.type, it = t.items[t.i], inp = $('tin'), val = inp ? inp.value : '', h = '';
+    for (var i = 0; i < it.target.length; i++) {
+      var ch = it.target.charAt(i), cls = '';
+      if (i < val.length) cls = eq(val.charAt(i), ch, t.mode) ? 'ok' : 'bad';
+      else if (i === val.length) cls = 'cur';
+      var shown = it.listen ? (i < val.length ? val.charAt(i) : '•') : ch;
+      if (shown === ' ') shown = ' ';
+      h += '<span class="' + cls + (it.listen && i >= val.length ? ' dim' : '') + '">' + esc(shown) + '</span>';
+    }
+    return h;
+  }
+  function tstats() {
+    var t = ui.type;
+    if (!t || t.done || !$('t-wpm')) { if (!t || !$('t-wpm')) stopTick(); return; }
+    var inp = $('tin'), it = t.items[t.i], ok = 0;
+    if (inp) { var v = inp.value; for (var k = 0; k < v.length && k < it.target.length; k++) { if (eq(v.charAt(k), it.target.charAt(k), t.mode)) ok++; else break; } }
+    var el = t.start ? Math.max((Date.now() - t.start) / 1000, 1) : 0;
+    $('t-wpm').textContent = t.start ? Math.round(((t.typed + ok) / 5) / (el / 60)) : 0;
+    $('t-acc').textContent = (t.keys ? Math.round((t.keys - t.wrong) / t.keys * 100) : 100) + '%';
+    $('t-time').textContent = (t.start ? Math.round(el) : 0) + ' s';
+  }
+  function finishType() {
+    var t = ui.type;
+    t.done = true; t.end = Date.now(); stopTick();
+    var el = Math.max((t.end - t.start) / 1000, 1);
+    t.wpm = Math.round((t.typed / 5) / (el / 60));
+    t.acc = t.keys ? Math.round((t.keys - t.wrong) / t.keys * 100) : 100;
+    t.sec = Math.round(el);
+    t.record = t.wpm > store.best[store.course];
+    if (t.record) store.best[store.course] = t.wpm;
+    addXp(5);
+  }
+  function onType() {
+    var t = ui.type, inp = $('tin');
+    if (!t || t.done || !inp || inp.disabled) return;
+    var it = t.items[t.i], val = inp.value, prev = t.prev || 0;
+    if (!t.start && val.length) t.start = Date.now();
+    for (var k = prev; k < val.length; k++) { t.keys++; if (!eq(val.charAt(k), it.target.charAt(k), t.mode)) t.wrong++; }
+    t.prev = val.length;
+    $('ttarget').innerHTML = targetHtml();
+    tstats();
+    var full = val.length === it.target.length;
+    if (full) { for (var j = 0; j < val.length; j++) if (!eq(val.charAt(j), it.target.charAt(j), t.mode)) { full = false; break; } }
+    if (full) {
+      t.typed += it.target.length; inp.disabled = true; addXp(3); burstEl($('ttarget'));
+      setTimeout(function () {
+        if (ui.type !== t) return;
+        t.i++; t.prev = 0;
+        if (t.i >= t.items.length) finishType();
+        render();
+      }, 320);
+    }
+  }
+  function viewType() {
+    var t = ui.type, c = store.course;
+    var modes = [['word', 'So‘z'], ['sentence', c === 'it' ? 'Kod' : 'Gap'], ['listen', 'Tinglab yozish']];
+    var seg = '<div class="seg" role="group" aria-label="Rejim">' + modes.map(function (m) {
+      return '<button data-act="tmode" data-i="' + m[0] + '" aria-pressed="' + (ui.tmode === m[0]) + '">' + m[1] + '</button>';
+    }).join('') + '</div>';
+    var best = '<span class="count">Rekord: ' + store.best[c] + ' so‘z/daq</span>';
+    if (!t) {
+      var tip = ui.tmode === 'word' ? 'Tarjimani ko‘rasiz, so‘zni yozasiz.' : ui.tmode === 'sentence' ? (c === 'it' ? 'Kod qatorini aynan ko‘chirib yozasiz.' : 'Gapni aynan ko‘chirib yozasiz.') : 'So‘zni eshitasiz va yozasiz.';
+      return '<div class="toolbar">' + seg + best + '</div><div class="quiz"><div class="empty"><h3>Tez yozish mashqi</h3><p>' + tip + (c === 'ru' ? ' Rus klaviaturangiz bo‘lmasa, ekrandagi tugmalardan foydalaning.' : '') + ' Tezlik va aniqlik hisoblanadi.</p><button class="btn fill" data-act="tstart">Boshlash</button></div></div>';
+    }
+    if (t.done) {
+      return '<div class="toolbar">' + seg + best + '</div><div class="quiz"><div class="empty"><div class="score">' + t.wpm + '</div><p>so‘z/daqiqa</p><h3>' + (t.record ? 'Yangi rekord!' : 'Mashq tugadi') + '</h3><p>Aniqlik ' + t.acc + '%, vaqt ' + t.sec + ' soniya.</p><button class="btn fill" data-act="tstart">Yana mashq qilish</button></div></div>';
+    }
+    var it = t.items[t.i];
+    var prompt = it.listen ? 'Eshiting va yozing' : (it.prompt ? '<b>' + esc(it.prompt) + '</b>' + (it.tr ? ' <span class="tr">[' + esc(it.tr) + ']</span>' : '') : '');
+    var kb = '';
+    if (c === 'ru') {
+      kb = '<div class="kb" id="kb">' + KB.map(function (row) {
+        return '<div class="kbrow">' + row.split('').map(function (ch) { return '<button class="key" data-act="key" data-v="' + ch + '">' + (ui.shift ? ch.toUpperCase() : ch) + '</button>'; }).join('') + '</div>';
+      }).join('') +
+      '<div class="kbrow"><button class="key wide" data-act="kshift" aria-pressed="' + ui.shift + '" aria-label="Bosh harf">Aa</button>' +
+      '<button class="key space" data-act="key" data-v=" ">probel</button>' +
+      ['.', ',', '!', '?'].map(function (p) { return '<button class="key" data-act="key" data-v="' + p + '">' + p + '</button>'; }).join('') +
+      '<button class="key wide" data-act="kback" aria-label="O‘chirish">⌫</button></div></div>';
+    }
+    return '<div class="toolbar">' + seg + best + '</div><div class="typing">' +
+      '<div class="pos"><span>' + (t.i + 1) + ' / ' + t.items.length + '</span><div class="bar"><i style="width:' + Math.round((t.i / t.items.length) * 100) + '%"></i></div></div>' +
+      '<div class="tstats"><div class="tile"><b id="t-wpm">0</b><span>so‘z/daq</span></div><div class="tile"><b id="t-acc">100%</b><span>aniqlik</span></div><div class="tile"><b id="t-time">0 s</b><span>vaqt</span></div></div>' +
+      '<div class="tprompt">' + prompt + '</div>' +
+      '<div class="ttarget" id="ttarget" aria-live="off">' + targetHtml() + '</div>' +
+      '<input id="tin" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="' + it.target.length + '" placeholder="' + (it.listen ? 'Eshitganingizni yozing' : 'Shu yerga yozing') + '" aria-label="Yozish maydoni">' +
+      (it.listen && canSpeak() ? '<div class="row"><button class="ibtn" data-act="tspeak">' + SPEAKER + 'Qayta eshitish</button></div>' : '') + kb + '</div>';
+  }
+  function setShift(on) {
+    ui.shift = on;
+    var btn = document.querySelector('[data-act="kshift"]');
+    if (btn) btn.setAttribute('aria-pressed', String(on));
+    var keys = document.querySelectorAll('[data-act="key"]');
+    for (var i = 0; i < keys.length; i++) {
+      var ch = keys[i].getAttribute('data-v');
+      if (/[а-яё]/.test(ch)) keys[i].textContent = on ? ch.toUpperCase() : ch;
+    }
+  }
+  function kbAction(a, v) {
+    var t = ui.type, inp = $('tin');
+    if (a === 'kshift') { setShift(!ui.shift); return; }
+    if (!t || t.done || !inp || inp.disabled) return;
+    if (a === 'kback') { inp.value = inp.value.slice(0, -1); t.prev = inp.value.length; $('ttarget').innerHTML = targetHtml(); return; }
+    if (inp.value.length >= inp.maxLength) return;
+    var chr = v;
+    if (ui.shift && /[а-яё]/.test(chr)) { chr = chr.toUpperCase(); setShift(false); }
+    inp.value += chr;
+    onType();
+  }
+  document.addEventListener('input', function (e) { if (e.target && e.target.id === 'tin') onType(); });
+
+  /* ---------- darslar va alifbo ---------- */
+  function viewLessons() {
+    return '<div class="lessons">' + C().lessons.map(function (l, i) {
+      return '<details class="lesson"' + (i === 0 ? ' open' : '') + '><summary>' + esc(l.t) + '</summary><div class="lbody">' + l.html + (l.code ? '<pre><code>' + esc(l.code) + '</code></pre>' : '') + '</div></details>';
+    }).join('') + '</div>';
+  }
+  function viewAlpha() {
+    var a = ALPHA[ui.letter];
+    var grid = ALPHA.map(function (l, i) { return '<button class="letter" data-act="letter" data-i="' + i + '" aria-pressed="' + (i === ui.letter) + '" aria-label="Harf ' + l[0] + '">' + l[0] + '</button>'; }).join('');
+    return '<div class="alpha"><div class="ldetail"><div class="big">' + a[0] + a[0].toLowerCase() + '</div><div class="meta"><div class="snd">' + esc(a[1]) + '</div>' +
+      '<div class="wd">' + esc(a[2]) + '</div><div class="small">' + esc(a[3]) + '</div></div>' +
+      (canSpeak() ? '<button class="ibtn" data-act="speak" data-v="w">' + SPEAKER + 'Eshitish</button>' : '') + '</div>' +
+      '<div class="letters" role="group" aria-label="Rus alifbosi, 33 harf">' + grid + '</div></div>';
+  }
+
+  /* ---------- chizish ---------- */
+  function render() {
+    var app = $('app'), c = store.course;
+    app.setAttribute('data-course', c);
+    renderStats();
+    $('courses').innerHTML = Object.keys(COURSES).map(function (k) {
+      var cc = COURSES[k], n = store.known[k].length, t = cc.words.length;
+      return '<button class="course" data-k="' + k + '" data-act="course" data-i="' + k + '" aria-pressed="' + (k === c) + '">' +
+        '<div class="glyph" aria-hidden="true">' + esc(cc.glyph) + '</div><h2>' + cc.name + '</h2><div class="sub">' + cc.sub + '</div>' +
+        '<div class="bar"><i style="width:' + Math.round((n / t) * 100) + '%"></i></div><div class="cnt">' + n + ' / ' + t + ' ' + cc.unit + '</div></button>';
+    }).join('');
+    $('wtitle').textContent = C().name;
+
+    var tabs = [['cards', 'Kartalar'], ['type', 'Yozish'], ['match', 'Juftlash'], ['build', c === 'it' ? 'Kod tuzish' : 'Gap tuzish'], ['quiz', 'Test'], ['lessons', 'Darslar']];
+    if (c === 'ru') tabs.push(['alpha', 'Alifbo']);
+    if (!tabs.some(function (t) { return t[0] === ui.tab; })) ui.tab = 'cards';
+    $('tabs').innerHTML = tabs.map(function (t) {
+      return '<button class="tab" role="tab" data-act="tab" data-i="' + t[0] + '" aria-selected="' + (ui.tab === t[0]) + '">' + t[1] + '</button>';
+    }).join('');
+
+    var views = { cards: viewCards, type: viewType, match: viewMatch, build: viewBuild, quiz: viewQuiz, lessons: viewLessons, alpha: viewAlpha };
+    $('body').innerHTML = '<div class="view">' + views[ui.tab]() + '</div>';
+    ui.anim = '';
+    if (ui.tab !== 'type') stopTick();
+
+    var tin = $('tin');
+    if (tin && !tin.disabled) {
+      tin.focus({ preventScroll: true });
+      var t = ui.type;
+      if (t && t.items[t.i].listen && t.spokenFor !== t.i) { t.spokenFor = t.i; speak(t.items[t.i].target, lk(), t.items[t.i].tr); }
+    } else if (ui.focus) {
+      var all = app.querySelectorAll('[data-act]');
+      for (var i = 0; i < all.length; i++) {
+        if (all[i].getAttribute('data-act') + (all[i].getAttribute('data-i') || '') === ui.focus) { all[i].focus({ preventScroll: true }); break; }
+      }
+    }
+    ui.focus = null;
+  }
+
+  function resetSessions() { ui.idx = 0; ui.flip = false; ui.quiz = null; ui.match = null; ui.sent = null; ui.type = null; ui.letter = 0; stopTick(); }
+
+  $('app').addEventListener('click', function (e) {
+    var el = e.target.closest('[data-act]');
+    if (!el || el.disabled) return;
+    var a = el.getAttribute('data-act'), i = el.getAttribute('data-i'), v = el.getAttribute('data-v');
+    var cx = e.clientX, cy = e.clientY;
+
+    /* qayta chizishni talab qilmaydigan amallar */
+    if (a === 'theme') { toggleTheme(); return; }
+    if (a === 'voice') {
+      var pn = $('voice'); pn.hidden = !pn.hidden;
+      el.setAttribute('aria-expanded', String(!pn.hidden));
+      if (!pn.hidden) renderVoice();
+      return;
+    }
+    if (a === 'vtest') { if (i === 'ru') speak('Привет! Добро пожаловать в Тилкон.', 'ru', 'privet, dobro pojalovat v tilkon'); else speak('Hello! Welcome to Tilkon.', 'en'); return; }
+    if (a === 'speak') {
+      if (ui.tab === 'alpha') speak(ALPHA[ui.letter][2], 'ru');
+      else { var cd = deck()[ui.idx]; if (cd) speak(v === 'ex' ? cd.ex : cd.f, lk(), v === 'ex' ? null : cd.tr); }
+      return;
+    }
+    if (a === 'sspeak') { if (ui.sent && ui.sent.items[ui.sent.i]) speak(ui.sent.items[ui.sent.i].text, lk()); return; }
+    if (a === 'tspeak') { if (ui.type && !ui.type.done) { speak(ui.type.items[ui.type.i].target, lk(), ui.type.items[ui.type.i].tr); var ti = $('tin'); if (ti) ti.focus({ preventScroll: true }); } return; }
+    if (a === 'key' || a === 'kback' || a === 'kshift') { kbAction(a, v); return; }
+
+    var known = store.known[store.course];
+    ui.focus = a + (i || '');
+
+    if (a === 'course') { store.course = i; resetSessions(); ui.only = false; if (ui.tab === 'alpha' && i !== 'ru') ui.tab = 'cards'; save(); }
+    else if (a === 'tab') { ui.tab = i; resetSessions(); ui.anim = ''; }
+    else if (a === 'flip') { ui.flip = !ui.flip; ui.anim = 'a-flip'; }
+    else if (a === 'filter') { ui.only = v === 'un'; ui.idx = 0; ui.flip = false; ui.anim = 'a-slide'; }
+    else if (a === 'prev' || a === 'next') {
+      var n = deck().length;
+      ui.idx = a === 'next' ? (ui.idx + 1) % n : (ui.idx - 1 + n) % n;
+      ui.flip = false; ui.anim = 'a-slide';
+    }
+    else if (a === 'know' || a === 'again') {
+      var d = deck(), w = d[ui.idx];
+      if (w) {
+        var pos = known.indexOf(w.f);
+        if (a === 'know' && pos < 0) { known.push(w.f); save(); addXp(2); burst(cx, cy); }
+        if (a === 'again' && pos >= 0) { known.splice(pos, 1); save(); }
+        if (!(ui.only && a === 'know')) ui.idx = (ui.idx + 1) % d.length;
+        ui.flip = false; ui.anim = 'a-slide';
+      }
+    }
+    else if (a === 'reset') { store.known[store.course] = []; ui.only = false; ui.idx = 0; ui.flip = false; save(); }
+    else if (a === 'qstart') { buildQuiz(); }
+    else if (a === 'qpick') {
+      var q = ui.quiz;
+      if (q && q.picked === null) {
+        q.picked = +i;
+        if (q.qs[q.i].opts[q.picked] === q.qs[q.i].correct) { q.score++; addXp(3); burst(cx, cy); }
+      }
+    }
+    else if (a === 'qnext') {
+      ui.quiz.i++; ui.quiz.picked = null;
+      if (ui.quiz.i >= ui.quiz.qs.length && ui.quiz.score >= 6) burst(cx, cy);
+    }
+    else if (a === 'mstart') { buildMatch(); }
+    else if (a === 'mL' || a === 'mR') {
+      var m = ui.match;
+      if (m && m.done.indexOf(+i) < 0) {
+        m.bad = null;
+        if (a === 'mL') m.sl = +i; else m.sr = +i;
+        if (m.sl !== null && m.sr !== null) {
+          m.moves++;
+          if (m.sl === m.sr) {
+            m.done.push(m.sl); addXp(2); burst(cx, cy);
+            if (m.done.length === m.ws.length) { m.end = Date.now(); addXp(10); setTimeout(function () { burst(window.innerWidth / 2, window.innerHeight / 3); }, 60); }
+          } else m.bad = [m.sl, m.sr];
+          m.sl = null; m.sr = null;
+        }
+      }
+    }
+    else if (a === 'sstart') { buildSent(); }
+    else if (a === 'sp') {
+      var s = ui.sent;
+      if (s && !s.res) {
+        var ti2 = +i, pi = s.pool.indexOf(ti2);
+        if (pi >= 0) { s.pool.splice(pi, 1); s.ans.push(ti2); }
+        if (s.pool.length === 0) {
+          var ok = s.ans.map(function (k) { return s.toks[k]; }).join(' ') === s.items[s.i].text;
+          s.res = ok ? 'ok' : 'bad';
+          if (ok) { s.score++; addXp(4); burst(cx, cy); }
+        }
+      }
+    }
+    else if (a === 'sa') {
+      var s2 = ui.sent;
+      if (s2 && !s2.res) { var back = s2.ans.splice(+i, 1)[0]; s2.pool.push(back); }
+    }
+    else if (a === 'sretry') { var s3 = ui.sent; s3.pool = shuffle(s3.toks.map(function (t, k) { return k; })); s3.ans = []; s3.res = null; }
+    else if (a === 'snext') { ui.sent.i++; if (ui.sent.i < ui.sent.items.length) initSentItem(); }
+    else if (a === 'tmode') { ui.tmode = i; ui.type = null; stopTick(); }
+    else if (a === 'tstart') { buildType(); }
+    else if (a === 'letter') { ui.letter = +i; }
+    render();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (ui.tab !== 'cards' || e.altKey || e.ctrlKey || e.metaKey) return;
+    var n = deck().length;
+    if (!n) return;
+    if (e.key === 'ArrowRight') { ui.idx = (ui.idx + 1) % n; ui.flip = false; ui.anim = 'a-slide'; render(); }
+    else if (e.key === 'ArrowLeft') { ui.idx = (ui.idx - 1 + n) % n; ui.flip = false; ui.anim = 'a-slide'; render(); }
+  });
+
+  syncTheme();
+  render();
+})();
+</script>
